@@ -6,9 +6,6 @@ services:
       dockerfile: ./compose/local/fastapi/Dockerfile
     image: reportapi
     container_name: report_local_fastapi
-    volumes:
-      - ./src/app:/app
-        - ./src/.env:/app/.env
     env_file:
       - .envs/.local/.fastapi
       - .envs/.local/.dba
