@@ -9,6 +9,7 @@ dependencies = [
     "gunicorn>=25.0.3",
     "psycopg2>=2.9,<3.0",
     "pydantic-settings>=2.12.0",
+    "sqlalchemy>=2.0.46",
     "structlog>=25.5.0",
     "uvicorn>=0.40.0",
 ]
