@@ -1,6 +1,13 @@
-from fastapi import FastAPI
+from src.app.core.config import settings
+from src.app.core.setup import create_application, lifespan_factory
 
-app = FastAPI()
+lifespan = lifespan_factory(settings=settings)
+
+app = create_application(
+    # router=router,
+    settings=settings,
+    lifespan=lifespan
+)
 
 
 @app.get("/")
