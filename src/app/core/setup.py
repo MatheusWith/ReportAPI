@@ -8,7 +8,8 @@ from fastapi import APIRouter, Depends, FastAPI
 from fastapi.openapi.docs import get_redoc_html, get_swagger_ui_html
 from fastapi.openapi.utils import get_openapi
 
-from src.app.core.config import AppSettings, EnvironmentOption, EnvironmentSettings, settings
+from src.app.core.config import AppSettings, EnvironmentOption, EnvironmentSettings, FileLoggerSettings, ConsoleLoggerSettings, settings
+from src.app.middleware.logger_middleware import LoggerMiddleware
 
 
 # -------------- application --------------
@@ -101,6 +102,8 @@ def create_application(
         #     allow_methods=settings.CORS_METHODS,
         #     allow_headers=settings.CORS_HEADERS,
         # )
+
+    application.add_middleware(LoggerMiddleware)
     if isinstance(settings,EnvironmentSettings):
         if settings.ENVIRONMENT != EnvironmentOption.PRODUCTION:
             docs_router = APIRouter()
