@@ -39,7 +39,7 @@ def lifespan_factory(
         finally:
             pass
 
-        return lifespan
+    return lifespan
 
 def create_application(
     router: APIRouter,
