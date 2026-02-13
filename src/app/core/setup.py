@@ -8,7 +8,7 @@ from fastapi import APIRouter, Depends, FastAPI
 from fastapi.openapi.docs import get_redoc_html, get_swagger_ui_html
 from fastapi.openapi.utils import get_openapi
 
-from src.app.core.config import AppSettings, EnvironmentSettings, settings
+from src.app.core.config import AppSettings, EnvironmentOption, EnvironmentSettings, settings
 
 
 # -------------- application --------------
@@ -102,7 +102,7 @@ def create_application(
         #     allow_headers=settings.CORS_HEADERS,
         # )
     if isinstance(settings,EnvironmentSettings):
-        if settings.ENVIRONMENT != EnvironmentSettings.PRODUCTION:
+        if settings.ENVIRONMENT != EnvironmentOption.PRODUCTION:
             docs_router = APIRouter()
 
             @docs_router.get("/docs", include_in_schema=False)
