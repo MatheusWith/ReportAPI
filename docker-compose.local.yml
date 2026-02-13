@@ -1,0 +1,14 @@
+
+services:
+  reportapi:
+    build: 
+      context: .
+      dockerfile: ./compose/local/fastapi/Dockerfile
+    image: reportapi
+    container_name: report_local_fastapi
+    env_file:
+      - .envs/.local/.fastapi
+      - .envs/.local/.dba
+    ports:
+      - '8080:8000'
+    command: /start
