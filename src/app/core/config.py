@@ -23,10 +23,35 @@ class EnvironmentOption(str, Enum):
 class EnvironmentSettings(BaseSettings):
     ENVIRONMENT: EnvironmentOption = EnvironmentOption.LOCAL
 
+class FileLoggerSettings(BaseSettings):
+    FILE_LOG_MAX_BYTES: int = 10 * 1024 * 1024
+    FILE_LOG_BACKUP_COUNT: int = 5
+    FILE_LOG_FORMAT_JSON: bool = True
+    FILE_LOG_LEVEL: str = "INFO"
+
+    # Include request ID, path, method, client host, and status code in the file log
+    FILE_LOG_INCLUDE_REQUEST_ID: bool = True
+    FILE_LOG_INCLUDE_PATH: bool = True
+    FILE_LOG_INCLUDE_METHOD: bool = True
+    FILE_LOG_INCLUDE_CLIENT_HOST: bool = True
+    FILE_LOG_INCLUDE_STATUS_CODE: bool = True
+
+class ConsoleLoggerSettings(BaseSettings):
+    CONSOLE_LOG_LEVEL: str = "INFO"
+    CONSOLE_LOG_FORMAT_JSON: bool = False
+
+    # Include request ID, path, method, client host, and status code in the console log
+    CONSOLE_LOG_INCLUDE_REQUEST_ID: bool = False
+    CONSOLE_LOG_INCLUDE_PATH: bool = False
+    CONSOLE_LOG_INCLUDE_METHOD: bool = False
+    CONSOLE_LOG_INCLUDE_CLIENT_HOST: bool = False
+    CONSOLE_LOG_INCLUDE_STATUS_CODE: bool = False
 
 class Settings(
     AppSettings,
     EnvironmentSettings,
+    FileLoggerSettings,
+    ConsoleLoggerSettings,
 ):
     class Config:
         env_file = None
