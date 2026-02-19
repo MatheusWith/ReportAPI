@@ -1,4 +1,5 @@
-from typing import Annotated
+import logging
+from typing import Annotated, Any
 
 from fastapi import Depends, HTTPException, status
 from sqlalchemy import text
@@ -9,17 +10,21 @@ from src.app.core.db.dba_database import async_get_dba
 from src.app.schema.vend_schema import PaginatedResponse, VendParams, VendReport
 from src.app.service.dependencies import read_sql_query
 
+LOGGER = logging.getLogger(__name__)
 
 async def dba_vend_service(
     *,
     db: Annotated[AsyncSession,Depends(async_get_dba)],
     params: VendParams,
-) -> PaginatedResponse:
+#) -> PaginatedResponse:
+) -> Any:
+    return {"foi":"foi"}
     try:
         sql = read_sql_query("src/app/sql/vend.sql")
         sql_count = read_sql_query("src/app/sql/vend_count.sql")
     except FileNotFoundError:
-        raise HTTPException(status_code=500, detail="internal server configuration error")
+        LOGGER.error("Files not found")
+        raise HTTPException(status_code=500, detail="Internal server configuration error")
 
     try:
         query = await db.execute(
@@ -40,9 +45,10 @@ async def dba_vend_service(
             }
         )
     except SQLAlchemyError as e:
+        LOGGER.error("It doesn't connect to the database.")
         raise HTTPException(
             status_code=status.HTTP_503_SERVICE_UNAVAILABLE,
-            detail="it doesn't connect to the database."
+            detail="It doesn't connect to the database."
         )
 
     return PaginatedResponse(

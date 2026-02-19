@@ -63,8 +63,8 @@ class DBAPostgresSettings(DatabaseSettings):
     @computed_field  # type: ignore[prop-decorator]
     @property
     def DBAPOSTGRES_URI(self) -> str:
-        credentials = f"{self.POSTGRES_USER}:{self.POSTGRES_PASSWORD}"
-        location = f"{self.POSTGRES_SERVER}:{self.POSTGRES_PORT}/{self.POSTGRES_DB}"
+        credentials = f"{self.DBAPOSTGRES_USER}:{self.DBAPOSTGRES_PASSWORD}"
+        location = f"{self.DBAPOSTGRES_SERVER}:{self.DBAPOSTGRES_PORT}/{self.DBAPOSTGRES_DB}"
         return f"{credentials}@{location}"
 
 class Settings(
