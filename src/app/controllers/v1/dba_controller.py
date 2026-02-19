@@ -1,4 +1,4 @@
-from typing import Annotated
+from typing import Annotated, Any
 
 from fastapi import APIRouter, Depends, HTTPException, Request
 
@@ -12,6 +12,6 @@ async def dba_vend(
     *,
     request:Request,
     params: Annotated[VendParams,Depends()],
-) -> PaginatedResponse | HTTPException:
+) -> PaginatedResponse | HTTPException | Any:
 
     return await vend_service.dba_vend_service(params=params)
