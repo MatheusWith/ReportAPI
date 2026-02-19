@@ -47,11 +47,32 @@ class ConsoleLoggerSettings(BaseSettings):
     CONSOLE_LOG_INCLUDE_CLIENT_HOST: bool = False
     CONSOLE_LOG_INCLUDE_STATUS_CODE: bool = False
 
+class DatabaseSettings(BaseSettings):
+    pass
+
+class DBAPostgresSettings(DatabaseSettings):
+    DBAPOSTGRES_USER: str = "postgres"
+    DBAPOSTGRES_PASSWORD: str = "postgres"
+    DBAPOSTGRES_SERVER: str = "localhost"
+    DBAPOSTGRES_PORT: int = 5432
+    DBAPOSTGRES_DB: str = "postgres"
+    DBAPOSTGRES_SYNC_PREFIX: str = "postgresql://"
+    DBAPOSTGRES_ASYNC_PREFIX: str = "postgresql+asyncpg://"
+    DBAPOSTGRES_URL: str | None = None
+
+    @computed_field  # type: ignore[prop-decorator]
+    @property
+    def DBAPOSTGRES_URI(self) -> str:
+        credentials = f"{self.POSTGRES_USER}:{self.POSTGRES_PASSWORD}"
+        location = f"{self.POSTGRES_SERVER}:{self.POSTGRES_PORT}/{self.POSTGRES_DB}"
+        return f"{credentials}@{location}"
+
 class Settings(
     AppSettings,
     EnvironmentSettings,
     FileLoggerSettings,
     ConsoleLoggerSettings,
+    DBAPostgresSettings,
 ):
     class Config:
         env_file = None
