@@ -1,5 +1,8 @@
 from typing import Annotated, Any
 from fastapi import APIRouter, Depends, Request
+from sqlalchemy.ext.asyncio import AsyncSession
+
+from src.app.schema.vend_schema import VendParams
 
 
 controller = APIRouter(tags=["dba"])
@@ -8,5 +11,6 @@ controller = APIRouter(tags=["dba"])
 async def dba_vend(
     *,
     request:Request,
-    params: Any
+    params: Annotated[VendParams,Depends()],
+    dba: Annotated[Asyn]
 )
