@@ -1,9 +1,9 @@
-from typing import Annotated, Any
+from typing import Annotated
 
-from fastapi import APIRouter, Depends, Request
-from sqlalchemy.ext.asyncio import AsyncSession
+from fastapi import APIRouter, Depends, HTTPException, Request
 
-from src.app.schema.vend_schema import VendParams
+from src.app.schema.vend_schema import PaginatedResponse, VendParams
+from src.app.service import vend_service
 
 controller = APIRouter(tags=["dba"])
 
@@ -12,6 +12,6 @@ async def dba_vend(
     *,
     request:Request,
     params: Annotated[VendParams,Depends()],
-    dba: Annotated[AsyncSession,Depends()]
-):
-    pass
+) -> PaginatedResponse | HTTPException:
+
+    return await vend_service.dba_vend_service(params=params)
