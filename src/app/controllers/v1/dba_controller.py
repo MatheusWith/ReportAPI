@@ -7,11 +7,12 @@ from src.app.service import vend_service
 
 controller = APIRouter(tags=["dba"])
 
-@controller.get("dba/vend/")
+
+@controller.get("dba/vend/",status_code=200,response_model=PaginatedResponse)
 async def dba_vend(
     *,
     request:Request,
     params: Annotated[VendParams,Depends()],
-) -> PaginatedResponse | HTTPException | Any:
+) -> PaginatedResponse:
 
     return await vend_service.dba_vend_service(params=params)
