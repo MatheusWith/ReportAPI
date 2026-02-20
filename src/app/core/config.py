@@ -1,8 +1,7 @@
-import os
 from enum import Enum
 
-from pydantic import SecretStr, computed_field
-from pydantic_settings import BaseSettings, SettingsConfigDict
+from pydantic import computed_field
+from pydantic_settings import BaseSettings
 
 
 class AppSettings(BaseSettings):
@@ -18,7 +17,6 @@ class EnvironmentOption(str, Enum):
     LOCAL = "local"
     STAGING = "staging"
     PRODUCTION = "production"
-
 
 class EnvironmentSettings(BaseSettings):
     ENVIRONMENT: EnvironmentOption = EnvironmentOption.LOCAL
@@ -63,16 +61,19 @@ class DBAPostgresSettings(DatabaseSettings):
     @computed_field  # type: ignore[prop-decorator]
     @property
     def DBAPOSTGRES_URI(self) -> str:
-        credentials = f"{self.POSTGRES_USER}:{self.POSTGRES_PASSWORD}"
-        location = f"{self.POSTGRES_SERVER}:{self.POSTGRES_PORT}/{self.POSTGRES_DB}"
+        credentials = f"{self.DBAPOSTGRES_USER}:{self.DBAPOSTGRES_PASSWORD}"
+        location = f"{self.DBAPOSTGRES_SERVER}:{self.DBAPOSTGRES_PORT}/{self.DBAPOSTGRES_DB}"
         return f"{credentials}@{location}"
 
+class SQLFILESettings(BaseSettings):
+    BASE_FILE:str = "src/app/sql/"
 class Settings(
     AppSettings,
     EnvironmentSettings,
     FileLoggerSettings,
     ConsoleLoggerSettings,
     DBAPostgresSettings,
+    SQLFILESettings,
 ):
     class Config:
         env_file = None
