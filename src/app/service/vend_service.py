@@ -16,9 +16,7 @@ async def dba_vend_service(
     *,
     db: Annotated[AsyncSession,Depends(async_get_dba)],
     params: VendParams,
-#) -> PaginatedResponse:
-) -> Any:
-    return {"foi":"foi"}
+) -> PaginatedResponse:
     try:
         sql = read_sql_query("src/app/sql/vend.sql")
         sql_count = read_sql_query("src/app/sql/vend_count.sql")
@@ -51,9 +49,15 @@ async def dba_vend_service(
             detail="It doesn't connect to the database."
         )
 
+    datas: list[VendReport] = [VendReport(**row) for row in query.mappings().all()]
+    count: int = count.scalar_one()
+    current_page:int = params.current_page
+    total_pages:int = (count + params.per_page - 1) // params.per_page,
+
+
     return PaginatedResponse(
-        datas=[VendReport(**row) for row in query.mappings().all()],
-        count=count.scalar_one(),
-        current_page=params.current_page,
-        total_pages=(count + params.per_page - 1) // params.per_page,
+        datas=datas,
+        count=count,
+        current_page=current_page,
+        total_pages=total_pages,
     )
