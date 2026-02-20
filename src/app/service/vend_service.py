@@ -6,7 +6,6 @@ from sqlalchemy import text
 from sqlalchemy.exc import SQLAlchemyError
 from sqlalchemy.ext.asyncio import AsyncSession
 
-from src.app.core.db.dba_database import async_get_dba
 from src.app.schema.vend_schema import PaginatedResponse, VendParams, VendReport
 from src.app.service.dependencies import read_sql_query
 
@@ -14,18 +13,17 @@ LOGGER = logging.getLogger(__name__)
 
 async def dba_vend_service(
     *,
-    db: Annotated[AsyncSession,Depends(async_get_dba)],
+    db:AsyncSession,
     params: VendParams,
 ) -> PaginatedResponse:
-    try:
-        sql = read_sql_query("src/app/sql/vend.sql")
-        sql_count = read_sql_query("src/app/sql/vend_count.sql")
-    except FileNotFoundError:
-        LOGGER.error("Files not found")
+    sql:str = read_sql_query("vend.sql")
+    sql_count:str = read_sql_query("vend_count.sql")
+
+    if sql is None or sql_count is None:
         raise HTTPException(status_code=500, detail="Internal server configuration error")
 
     try:
-        query = await db.execute(
+        result_query = await db.execute(
             text(sql),
             {
                 "start_date": params.start_date,
@@ -35,7 +33,7 @@ async def dba_vend_service(
             },
         )
 
-        count = await db.execute(
+        result_count = await db.execute(
             text(sql_count),
             {
                 "start_date": params.start_date,
@@ -49,10 +47,10 @@ async def dba_vend_service(
             detail="It doesn't connect to the database."
         )
 
-    datas: list[VendReport] = [VendReport(**row) for row in query.mappings().all()]
-    count: int = count.scalar_one()
+    datas = [VendReport(**rq) for rq in result_query.mappings().all()]
+    count: int = result_count.scalar_one()
     current_page:int = params.current_page
-    total_pages:int = (count + params.per_page - 1) // params.per_page,
+    total_pages:int = (count + params.per_page - 1) // params.per_page
 
 
     return PaginatedResponse(
@@ -60,4 +58,5 @@ async def dba_vend_service(
         count=count,
         current_page=current_page,
         total_pages=total_pages,
+        per_page=params.per_page,
     )
