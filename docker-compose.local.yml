@@ -1,3 +1,5 @@
+volumes:
+  dba-data: {}
 
 services:
   reportapi:
@@ -12,3 +14,17 @@ services:
     ports:
       - '8080:8000'
     command: /start
+
+  dba:
+    build:
+      context: .
+      dockerfile: ./compose/local/postgres/Dockerfile
+    image: dba
+    container_name: report_local_dba
+    env_file:
+      - .envs/.local/dbs/.dba
+    ports:
+      - '5434:5432'
+    volumes:
+      - dba-data:/var/lib/postgresql/data
+
