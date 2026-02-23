@@ -61,3 +61,6 @@ dmypy.json
 
 # Cython debug symbols
 cython_debug/
+
+# exclude sql
+src/app/sql/*.sql
