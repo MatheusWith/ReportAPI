@@ -1,4 +1,4 @@
-from enum import Enum
+from enum import StrEnum
 
 from pydantic import computed_field
 from pydantic_settings import BaseSettings
@@ -13,7 +13,7 @@ class AppSettings(BaseSettings):
     CONTACT_EMAIL: str | None = None
 
 
-class EnvironmentOption(str, Enum):
+class EnvironmentOption(StrEnum):
     LOCAL = "local"
     STAGING = "staging"
     PRODUCTION = "production"
