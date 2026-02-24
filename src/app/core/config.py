@@ -18,6 +18,11 @@ class EnvironmentOption(str, Enum):
     STAGING = "staging"
     PRODUCTION = "production"
 
+class CORSSettings(BaseSettings):
+    CORS_ORIGINS: list[str] = ["*"]
+    CORS_METHODS: list[str] = ["*"]
+    CORS_HEADERS: list[str] = ["*"]
+
 class EnvironmentSettings(BaseSettings):
     ENVIRONMENT: EnvironmentOption = EnvironmentOption.LOCAL
 
@@ -83,6 +88,7 @@ class Settings(
     DBAPostgresSettings,
     SQLFileSettings,
     SlowapiSettings,
+    CORSSettings,
 ):
     class Config:
         env_file = None
