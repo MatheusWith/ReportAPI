@@ -7,8 +7,19 @@ import fastapi
 from fastapi import APIRouter, Depends, FastAPI
 from fastapi.openapi.docs import get_redoc_html, get_swagger_ui_html
 from fastapi.openapi.utils import get_openapi
+from slowapi import _rate_limit_exceeded_handler
+from slowapi.errors import RateLimitExceeded
 
-from src.app.core.config import AppSettings, EnvironmentOption, EnvironmentSettings, FileLoggerSettings, ConsoleLoggerSettings, settings
+from src.app.core.config import (
+    AppSettings,
+    ConsoleLoggerSettings,
+    EnvironmentOption,
+    EnvironmentSettings,
+    FileLoggerSettings,
+    SlowapiSettings,
+    settings,
+)
+from src.app.core.limiter import limiter
 from src.app.middleware.logger_middleware import LoggerMiddleware
 
 
@@ -93,6 +104,10 @@ def create_application(
 
     application = FastAPI(lifespan=lifespan, **kwargs)
     application.include_router(router)
+
+    if isinstance(settings,SlowapiSettings):
+        application.state.limiter = limiter
+        application.add_exception_handler(RateLimitExceeded, _rate_limit_exceeded_handler)
 
     # if isinstance(settings, CORSSettings):
         # application.add_middleware(
