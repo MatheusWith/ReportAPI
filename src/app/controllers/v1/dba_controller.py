@@ -11,7 +11,6 @@ from src.app.service import vend_service
 controller = APIRouter(tags=["dba"])
 
 @controller.get("/dba/vend/",status_code=200,response_model=PaginatedResponse)
-@limiter.limit("60/minute")
 async def dba_vend(
     *,
     request:Request,

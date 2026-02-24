@@ -73,7 +73,7 @@ class RateLimitSettings(BaseSettings):
     pass
 
 class SlowapiSettings(RateLimitSettings):
-    pass
+    GLOBAL_GENERIC_LIMIT: int = 60
 
 class Settings(
     AppSettings,
