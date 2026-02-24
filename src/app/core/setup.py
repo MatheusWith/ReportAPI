@@ -5,6 +5,7 @@ from typing import Any
 import anyio
 import fastapi
 from fastapi import APIRouter, Depends, FastAPI
+from fastapi.middleware.cors import CORSMiddleware
 from fastapi.openapi.docs import get_redoc_html, get_swagger_ui_html
 from fastapi.openapi.utils import get_openapi
 from slowapi import _rate_limit_exceeded_handler
@@ -13,6 +14,7 @@ from slowapi.errors import RateLimitExceeded
 from src.app.core.config import (
     AppSettings,
     ConsoleLoggerSettings,
+    CORSSettings,
     EnvironmentOption,
     EnvironmentSettings,
     FileLoggerSettings,
@@ -32,6 +34,8 @@ async def set_threadpool_tokens(number_of_tokens: int = 100) -> None:
 def lifespan_factory(
     settings:(
         AppSettings
+        | CORSSettings
+        | EnvironmentSettings
     ),
 ) -> Callable[[FastAPI], _AsyncGeneratorContextManager[Any]]:
     """Factory to create a lifespan async context manager for a FastAPI app."""
@@ -55,7 +59,12 @@ def lifespan_factory(
 
 def create_application(
     router: APIRouter,
-    settings: (AppSettings),
+    settings: (
+        AppSettings
+        | AppSettings
+        | CORSSettings
+        | EnvironmentSettings
+    ),
     lifespan: Callable[[FastAPI], _AsyncGeneratorContextManager[Any]],
     **kwargs: Any,
 ) -> FastAPI:
@@ -74,6 +83,10 @@ def create_application(
         It determines the configuration applied:
 
         - AppSettings: Configures basic app metadata like name, description, contact, and license info.
+        - DatabaseSettings: Adds event handlers for initializing database tables during startup.
+        - CORSSettings: Integrates CORS middleware with specified origins.
+        - EnvironmentSettings: Conditionally sets documentation URLs and integrates custom routes for API documentation
+            based on the environment type.
         **kwargs
         Additional keyword arguments passed directly to the FastAPI constructor.
 
@@ -109,14 +122,14 @@ def create_application(
         application.state.limiter = limiter
         application.add_exception_handler(RateLimitExceeded, _rate_limit_exceeded_handler)
 
-    # if isinstance(settings, CORSSettings):
-        # application.add_middleware(
-        #     CORSMiddleware,
-        #     allow_origins=settings.CORS_ORIGINS,
-        #     allow_credentials=True,
-        #     allow_methods=settings.CORS_METHODS,
-        #     allow_headers=settings.CORS_HEADERS,
-        # )
+    if isinstance(settings, CORSSettings):
+        application.add_middleware(
+            CORSMiddleware,
+            allow_origins=settings.CORS_ORIGINS,
+            allow_credentials=True,
+            allow_methods=settings.CORS_METHODS,
+            allow_headers=settings.CORS_HEADERS,
+        )
 
     application.add_middleware(LoggerMiddleware)
     if isinstance(settings,EnvironmentSettings):
