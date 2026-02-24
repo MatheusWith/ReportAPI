@@ -65,7 +65,7 @@ class DBAPostgresSettings(DatabaseSettings):
         location = f"{self.DBAPOSTGRES_SERVER}:{self.DBAPOSTGRES_PORT}/{self.DBAPOSTGRES_DB}"
         return f"{credentials}@{location}"
 
-class SQLFILESettings(BaseSettings):
+class SQLFileSettings(BaseSettings):
     BASE_FILE:str = "src/app/sql/"
 
 
@@ -81,7 +81,7 @@ class Settings(
     FileLoggerSettings,
     ConsoleLoggerSettings,
     DBAPostgresSettings,
-    SQLFILESettings,
+    SQLFileSettings,
     SlowapiSettings,
 ):
     class Config:
