@@ -23,7 +23,7 @@ class EnvironmentSettings(BaseSettings):
 
 class FileLoggerSettings(BaseSettings):
     FILE_LOG_MAX_BYTES: int = 10 * 1024 * 1024
-    FILE_LOG_BACKUP_COUNT: int = 5
+    FILE_LOG_BACKUP_COUNT: int = 3
     FILE_LOG_FORMAT_JSON: bool = True
     FILE_LOG_LEVEL: str = "INFO"
 
@@ -67,6 +67,14 @@ class DBAPostgresSettings(DatabaseSettings):
 
 class SQLFileSettings(BaseSettings):
     BASE_FILE:str = "src/app/sql/"
+
+
+class RateLimitSettings(BaseSettings):
+    pass
+
+class SlowapiSettings(RateLimitSettings):
+    GLOBAL_GENERIC_LIMIT: int = 60
+
 class Settings(
     AppSettings,
     EnvironmentSettings,
@@ -74,6 +82,7 @@ class Settings(
     ConsoleLoggerSettings,
     DBAPostgresSettings,
     SQLFileSettings,
+    SlowapiSettings,
 ):
     class Config:
         env_file = None
