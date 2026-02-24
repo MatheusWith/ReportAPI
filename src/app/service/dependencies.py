@@ -1,9 +1,9 @@
 import logging
 from pathlib import Path
 
-from src.app.core.config import settings
+from src.app.core.config import settings, SQLFileSettings
 
-base_file:str = settings.BASE_FILE
+base_file:str = settings.BASE_FILE if isinstance(settings,SQLFileSettings) else ""
 
 LOGGER = logging.getLogger(__name__)
 
