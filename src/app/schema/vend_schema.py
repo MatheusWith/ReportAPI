@@ -19,6 +19,12 @@ class Quantity(BaseModel):
 class All(BaseModel):
     all_items: bool
 
+class Datas[T](BaseModel):
+    datas: list[T] = Field(description="Lista de itens da página atual")
+
+class Count(BaseModel):
+    count: int = Field(ge=0, description="Total de itens disponíveis")
+
 class PaginationParams(BaseModel):  # noqa: D101
     current_page: PositiveInt = Field(1, description="Número da página (começa em 1)")
     per_page: PositiveInt = Field(
@@ -29,7 +35,6 @@ class PaginationParams(BaseModel):  # noqa: D101
     def offset(self) -> int:  # noqa: ANN201
         return (self.current_page - 1) * self.per_page
 
-
 class VendParams(StartDate,EndDate):
     pass
 
@@ -39,10 +44,10 @@ class VendAllQuantityParams(All, Quantity, VendParams):
 class VendPaginationParams(PaginationParams, VendParams):  # noqa: D101
     pass
 
+class ResponseData[T](Datas[T],Count):
+    pass
 
-class PaginatedResponse[T](BaseModel):  # noqa: D101
-    datas: list[T] = Field(description="Lista de itens da página atual")
-    count: int = Field(ge=0, description="Total de itens disponíveis")
+class PaginatedResponse[T](ResponseData[T]):  # noqa: D101
     current_page: PositiveInt = Field(ge=1, description="Página atual")
     per_page: PositiveInt = Field(ge=1, description="Quantidade de itens por pagina")
     total_pages: PositiveInt = Field(description="Quantidade total de pagina")

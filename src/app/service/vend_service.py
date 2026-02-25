@@ -6,7 +6,13 @@ from sqlalchemy import text
 from sqlalchemy.exc import SQLAlchemyError
 from sqlalchemy.ext.asyncio import AsyncSession
 
-from src.app.schema.vend_schema import PaginatedResponse, Vend, VendAllQuantityParams, VendPaginationParams
+from src.app.schema.vend_schema import (
+    PaginatedResponse,
+    ResponseData,
+    Vend,
+    VendAllQuantityParams,
+    VendPaginationParams,
+)
 from src.app.service.dependencies import read_sql_query
 
 LOGGER = logging.getLogger(__name__)
@@ -65,27 +71,26 @@ async def dba_vend_report_service(
     *,
     db:AsyncSession,
     params:VendAllQuantityParams,
-) -> list[Vend]:
-    sql:str = read_sql_query("vend/vend_report.sql")
+) -> ResponseData[Vend]:
+    sql:str = read_sql_query("vend/vend.sql")
     sql_count:str = read_sql_query("vend/vend_count.sql")
     if sql is None or sql_count is None:
         raise HTTPException(status_code=500, detail="Internal server configuration error")
 
-    try:
-        qp_count: dict[str, date | int | str] = {
-            "start_date": params.start_date,
-            "end_date": params.end_date,
-        }
+    qp_count: dict[str, date | int | str] = {
+        "start_date": params.start_date,
+        "end_date": params.end_date,
+    }
+    qp_query:dict[str, date | int | str] = qp_count.copy()
+    qp_query["offset"] = 0
 
+    try:
         result_count = await db.execute(
             text(sql_count),
             qp_count,
         )
         count:int = result_count.scalar_one()
-
-        qp_query:dict[str, date | int | str] = qp_count.copy()
-
-        qp_query["limit"] = count if params.all_items else params.quantity
+        qp_query["limit"] =  count if params.all_items else params.quantity
 
         query = await db.execute(
             text(sql),
@@ -100,4 +105,8 @@ async def dba_vend_report_service(
         )
 
     datas:list[Vend] = [Vend(**q) for q in query.mappings().all()]
-    return datas
+
+    return ResponseData[Vend](
+        datas=datas,
+        count=count,
+    )
