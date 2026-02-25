@@ -1,4 +1,4 @@
-from enum import Enum
+from enum import StrEnum
 
 from pydantic import computed_field
 from pydantic_settings import BaseSettings
@@ -13,17 +13,22 @@ class AppSettings(BaseSettings):
     CONTACT_EMAIL: str | None = None
 
 
-class EnvironmentOption(str, Enum):
+class EnvironmentOption(StrEnum):
     LOCAL = "local"
     STAGING = "staging"
     PRODUCTION = "production"
+
+class CORSSettings(BaseSettings):
+    CORS_ORIGINS: list[str] = ["*"]
+    CORS_METHODS: list[str] = ["*"]
+    CORS_HEADERS: list[str] = ["*"]
 
 class EnvironmentSettings(BaseSettings):
     ENVIRONMENT: EnvironmentOption = EnvironmentOption.LOCAL
 
 class FileLoggerSettings(BaseSettings):
     FILE_LOG_MAX_BYTES: int = 10 * 1024 * 1024
-    FILE_LOG_BACKUP_COUNT: int = 5
+    FILE_LOG_BACKUP_COUNT: int = 3
     FILE_LOG_FORMAT_JSON: bool = True
     FILE_LOG_LEVEL: str = "INFO"
 
@@ -65,15 +70,30 @@ class DBAPostgresSettings(DatabaseSettings):
         location = f"{self.DBAPOSTGRES_SERVER}:{self.DBAPOSTGRES_PORT}/{self.DBAPOSTGRES_DB}"
         return f"{credentials}@{location}"
 
-class SQLFILESettings(BaseSettings):
+class SQLFileSettings(BaseSettings):
     BASE_FILE:str = "src/app/sql/"
+
+
+class RateLimitSettings(BaseSettings):
+    pass
+
+class SlowapiSettings(RateLimitSettings):
+    GLOBAL_GENERIC_LIMIT: int = 60
+
+class GZipSettings(BaseSettings):
+    MINIMUM_SIZE: int = 1000
+    COMPRESS_LEVEL: int = 6
+
 class Settings(
     AppSettings,
     EnvironmentSettings,
     FileLoggerSettings,
     ConsoleLoggerSettings,
     DBAPostgresSettings,
-    SQLFILESettings,
+    SQLFileSettings,
+    SlowapiSettings,
+    CORSSettings,
+    GZipSettings,
 ):
     class Config:
         env_file = None
