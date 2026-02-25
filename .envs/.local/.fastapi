@@ -1,1 +1,54 @@
+# --- App Settings ---
+APP_NAME=ReportApi
+APP_DESCRIPTION="API de Gerenciamento de Relatórios"
+APP_VERSION=0.1.0
+CONTACT_NAME=""
+CONTACT_EMAIL=
+
+# --- Environment Settings ---
+# Opções: local, staging, production
+ENVIRONMENT=local
+
+# --- CORS Settings ---
+# Para listas, use vírgulas (dependendo de como seu parser está configurado)
+CORS_ORIGINS=["*"]
+CORS_METHODS=["*"]
+CORS_HEADERS=["*"]
+
+# --- File Logger Settings ---
+FILE_LOG_MAX_BYTES=10485760
+FILE_LOG_BACKUP_COUNT=3
+FILE_LOG_FORMAT_JSON=True
+FILE_LOG_LEVEL=INFO
+FILE_LOG_INCLUDE_REQUEST_ID=True
+FILE_LOG_INCLUDE_PATH=True
+FILE_LOG_INCLUDE_METHOD=True
+FILE_LOG_INCLUDE_CLIENT_HOST=True
+FILE_LOG_INCLUDE_STATUS_CODE=True
+
+# --- Console Logger Settings ---
+CONSOLE_LOG_LEVEL=INFO
+CONSOLE_LOG_FORMAT_JSON=False
+CONSOLE_LOG_INCLUDE_REQUEST_ID=False
+CONSOLE_LOG_INCLUDE_PATH=False
+CONSOLE_LOG_INCLUDE_METHOD=False
+CONSOLE_LOG_INCLUDE_CLIENT_HOST=False
+CONSOLE_LOG_INCLUDE_STATUS_CODE=False
+
+# --- Database Settings (Postgres) ---
+DBAPOSTGRES_USER=dba
+DBAPOSTGRES_PASSWORD=dba
+DBAPOSTGRES_SERVER=dba
+DBAPOSTGRES_PORT=5432
+DBAPOSTGRES_DB=dba
+# DBAPOSTGRES_URL= (Opcional, se preenchido sobrescreve a montagem automática)
+
+# --- SQL File Settings ---
+BASE_FILE=src/app/sql/
+
+# --- Rate Limit Settings (Slowapi) ---
 GLOBAL_GENERIC_LIMIT=60
+
+# --- GZip Settings ---
+MINIMUM_SIZE=1000
+COMPRESS_LEVEL=6
