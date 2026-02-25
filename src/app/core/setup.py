@@ -5,8 +5,8 @@ from typing import Any
 import anyio
 import fastapi
 from fastapi import APIRouter, Depends, FastAPI
-from fastapi.middleware.gzip import GZipMiddleware
 from fastapi.middleware.cors import CORSMiddleware
+from fastapi.middleware.gzip import GZipMiddleware
 from fastapi.openapi.docs import get_redoc_html, get_swagger_ui_html
 from fastapi.openapi.utils import get_openapi
 from slowapi import _rate_limit_exceeded_handler
@@ -19,8 +19,8 @@ from src.app.core.config import (
     EnvironmentOption,
     EnvironmentSettings,
     FileLoggerSettings,
-    SlowapiSettings,
     GZipSettings,
+    SlowapiSettings,
     settings,
 )
 from src.app.core.limiter import limiter
