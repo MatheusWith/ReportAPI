@@ -80,6 +80,10 @@ class RateLimitSettings(BaseSettings):
 class SlowapiSettings(RateLimitSettings):
     GLOBAL_GENERIC_LIMIT: int = 60
 
+class GZipSettings(BaseSettings):
+    MINIMUM_SIZE: int = 1000
+    COMPRESS_LEVEL: int = 6
+
 class Settings(
     AppSettings,
     EnvironmentSettings,
@@ -89,6 +93,7 @@ class Settings(
     SQLFileSettings,
     SlowapiSettings,
     CORSSettings,
+    GZipSettings,
 ):
     class Config:
         env_file = None

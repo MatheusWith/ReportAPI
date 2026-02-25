@@ -5,6 +5,7 @@ from typing import Any
 import anyio
 import fastapi
 from fastapi import APIRouter, Depends, FastAPI
+from fastapi.middleware.gzip import GZipMiddleware
 from fastapi.middleware.cors import CORSMiddleware
 from fastapi.openapi.docs import get_redoc_html, get_swagger_ui_html
 from fastapi.openapi.utils import get_openapi
@@ -19,6 +20,7 @@ from src.app.core.config import (
     EnvironmentSettings,
     FileLoggerSettings,
     SlowapiSettings,
+    GZipSettings,
     settings,
 )
 from src.app.core.limiter import limiter
@@ -64,6 +66,7 @@ def create_application(
         | AppSettings
         | CORSSettings
         | EnvironmentSettings
+        | GZipSettings
     ),
     lifespan: Callable[[FastAPI], _AsyncGeneratorContextManager[Any]],
     **kwargs: Any,
@@ -129,6 +132,13 @@ def create_application(
             allow_credentials=True,
             allow_methods=settings.CORS_METHODS,
             allow_headers=settings.CORS_HEADERS,
+        )
+
+    if isinstance(settings, GZipSettings):
+        application.add_middleware(
+            GZipMiddleware,
+            minimum_size=settings.MINIMUM_SIZE,
+            compresslevel=settings.COMPRESS_LEVEL
         )
 
     application.add_middleware(LoggerMiddleware)
