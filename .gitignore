@@ -64,3 +64,4 @@ cython_debug/
 
 # exclude sql
 src/app/sql/*.sql
+src/app/sql/*/*.sql
