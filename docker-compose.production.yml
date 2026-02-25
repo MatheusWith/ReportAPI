@@ -1,0 +1,13 @@
+services:
+  reportapi:
+    build: 
+      context: .
+      dockerfile: ./compose/production/fastapi/Dockerfile
+    image: reportapi:${REPORT_API_VERSION:-latest}
+    env_file:
+      - .envs/.production/.fastapi
+    ports:
+      - "8080:8000"
+    command: /start
+    # exec gunicorn src.app.main:app -w 4 -k uvicorn.workers.UvicornWorker -b 0.0.0.0:8000
+  
